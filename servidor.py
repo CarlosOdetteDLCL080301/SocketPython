@@ -58,7 +58,9 @@ def main():
     socketServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     # Enlaza el socket al localhost en el puerto 8000
-    socketServer.bind(('localhost', 8000))
+    # En el caso para obtener este ip, lo conseguimos usando 
+    # el comando ipconfig en la terminal de windows
+    socketServer.bind(('192.168.100.50', 8000))
 
     # Escucha hasta 5 conexiones entrantes en el socket
     socketServer.listen(5)
