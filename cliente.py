@@ -25,18 +25,25 @@ def main():
     miSocket = socket.socket()
     
     # Establece una conexión con el servidor en localhost y el puerto 8000
-    miSocket.connect(('localhost', 8000))
+    miSocket.connect(('192.168.100.50', 8000))
 
     while True:
         # Obtiene un mensaje ingresado por el usuario
         mensaje = input("Escribe un mensaje: ")
-        
-        # Llama a la función 'enviar_mensaje' para enviar el mensaje al servidor
-        enviar_mensaje(miSocket, mensaje)
+        #Se agrego un try - except, ya que se considera el caso en el que el servidor se desconecta a mitad
+        #del proceso, así que es mejor tambien finalizar la actividad del cliente con el servidor. 
+        try:
+            # Llama a la función 'enviar_mensaje' para enviar el mensaje al servidor
+            enviar_mensaje(miSocket, mensaje)
 
-        # Recibe una respuesta del servidor (hasta 1024 bytes) y la decodifica
-        respuesta = miSocket.recv(1024)
-        print(respuesta.decode('utf-8'))
+            # Recibe una respuesta del servidor (hasta 1024 bytes) y la decodifica
+            respuesta = miSocket.recv(1024)
+            print(respuesta.decode('utf-8'))
+        #Cuando se interrumpe la comunicación con el servidor, se finaliza la petición de más mensajes
+        #y esto provoca que el programa al igual finalice de este lado. 
+        except ConnectionResetError as error:
+            print("Se interrumpio la conexión con el servidor")
+            break
 
     # Cierra la conexión con el servidor
     miSocket.close()
