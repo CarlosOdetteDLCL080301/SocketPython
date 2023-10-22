@@ -1,6 +1,17 @@
+# Importa la biblioteca 'socket' para habilitar la comunicación de red, 
+# lo que permite la creación y el uso de sockets para establecer conexiones
+# y transmitir datos entre el cliente y el servidor.
 import socket
+
+# Importa la biblioteca 'threading' que proporciona herramientas para trabajar
+# con subprocesos, lo que permite manejar múltiples conexiones de clientes de forma concurrente.
 import threading
+
+# Importa la biblioteca 'time' para trabajar con funciones relacionadas con el tiempo,
+# como la obtención de la marca de tiempo actual, que se utiliza en la función de manejo
+# de clientes para marcar los mensajes con la hora en que se enviaron.
 import time
+
 
 # Diccionario para almacenar los mensajes de los clientes
 mensajes = {}
