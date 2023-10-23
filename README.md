@@ -31,8 +31,9 @@ En el clon 2
 En el clon 3
 ![image](https://github.com/CarlosOdetteDLCL080301/SocketPython/assets/54251397/e8c5a4ad-4411-41d7-931e-69d823e97327)
 
-Consumo
-![image](https://github.com/CarlosOdetteDLCL080301/SocketPython/assets/54251397/3613fca8-e246-4db2-a135-1a76c2f6feb9)
-
 En la imagen original
 ![image](https://github.com/CarlosOdetteDLCL080301/SocketPython/assets/54251397/14bbd715-8e26-47bd-8a98-ece86cd4b849)
+
+Consumo
+
+![image](https://github.com/CarlosOdetteDLCL080301/SocketPython/assets/54251397/3613fca8-e246-4db2-a135-1a76c2f6feb9)
