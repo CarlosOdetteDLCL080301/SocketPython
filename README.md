@@ -19,8 +19,6 @@ si=ngnyDLXV13flT1pG
 *__Fecha de entraga__: 24 de Octubre de 2023*
 ---
 ### Imagenes de ejecución
-En la imagen original
-![image](https://github.com/CarlosOdetteDLCL080301/SocketPython/assets/54251397/14bbd715-8e26-47bd-8a98-ece86cd4b849)
 
 En el clon 1
 ![image](https://github.com/CarlosOdetteDLCL080301/SocketPython/assets/54251397/60a89aaf-05be-4a3f-8d61-77148930c308)
@@ -35,3 +33,6 @@ En el clon 3
 
 Consumo
 ![image](https://github.com/CarlosOdetteDLCL080301/SocketPython/assets/54251397/3613fca8-e246-4db2-a135-1a76c2f6feb9)
+
+En la imagen original
+![image](https://github.com/CarlosOdetteDLCL080301/SocketPython/assets/54251397/14bbd715-8e26-47bd-8a98-ece86cd4b849)
