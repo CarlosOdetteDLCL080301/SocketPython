@@ -16,6 +16,21 @@ import time
 # Diccionario para almacenar los mensajes de los clientes
 mensajes = {}
 
+
+def escribir_diccionario_en_archivo(diccionario, nombre_archivo):
+    """
+    Escribe el contenido de un diccionario en un archivo de texto.
+
+    :param diccionario: El diccionario a escribir en el archivo.
+    :type diccionario: dict
+    :param nombre_archivo: El nombre del archivo de texto a crear o sobrescribir.
+    :type nombre_archivo: str
+    """
+    with open(nombre_archivo, 'w') as archivo:
+        for clave, valor in diccionario.items():
+            archivo.write(f"{clave}: {valor}\n")
+
+
 def procesarCliente(socketCliente, ipCliente):
     while True:
         try:
@@ -38,12 +53,16 @@ def procesarCliente(socketCliente, ipCliente):
             # Almacena el mensaje en el diccionario de mensajes
             if ipCliente not in mensajes:
                 mensajes[ipCliente] = []
-            mensajes[ipCliente].append((tiempoProcesado, mensaje))
+            mensajes[ipCliente].append((mensaje))
 
             # Envia una respuesta al cliente confirmando la recepción del mensaje
             respuesta = f"Mensaje recibido de {ipCliente}"
             socketCliente.send(respuesta.encode('utf-8'))
-
+            print(f"Mensaje {mensaje}")
+            
+            if ("FIN" in mensaje):
+                print("Se recibio un mensaje para finalizar el servidor")
+                break
         except Exception as error:
             # Si ocurre un error, se muestra en la consola y se sale del bucle
             print(f"Ocurrió un error: {error}")
@@ -51,7 +70,7 @@ def procesarCliente(socketCliente, ipCliente):
 
     # Cierra la conexión con el cliente una vez que se completa la comunicación
     socketCliente.close()
-
+    escribir_diccionario_en_archivo(mensajes,'logs.txt')
 
 def main():
     # Crea un socket de tipo AF_INET (IPv4) y SOCK_STREAM (TCP)
@@ -60,7 +79,7 @@ def main():
     # Enlaza el socket al localhost en el puerto 8000
     # En el caso para obtener este ip, lo conseguimos usando 
     # el comando ipconfig en la terminal de windows
-    socketServer.bind(('192.168.100.50', 8000))
+    socketServer.bind(('localhost', 8000))
 
     # Escucha hasta 5 conexiones entrantes en el socket
     socketServer.listen(5)
