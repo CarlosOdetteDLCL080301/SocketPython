@@ -72,14 +72,14 @@ def procesarCliente(socketCliente, ipCliente):
     socketCliente.close()
     escribir_diccionario_en_archivo(mensajes,'logs.txt')
 
-def main():
+def main(ip):
     # Crea un socket de tipo AF_INET (IPv4) y SOCK_STREAM (TCP)
     socketServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     # Enlaza el socket al localhost en el puerto 8000
     # En el caso para obtener este ip, lo conseguimos usando 
     # el comando ipconfig en la terminal de windows
-    socketServer.bind(('localhost', 8000))
+    socketServer.bind((str(ip), 8000))
 
     # Escucha hasta 5 conexiones entrantes en el socket
     socketServer.listen(5)
@@ -99,4 +99,4 @@ if __name__ == "__main__":
     # Verifica si este archivo se está ejecutando como un programa independiente
     # y no está siendo importado como un módulo en otro programa.
     # Si es el programa principal, ejecuta la función 'main()'.
-    main()
+    main("192.168.91.130")
