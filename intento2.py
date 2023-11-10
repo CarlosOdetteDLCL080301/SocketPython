@@ -1,41 +1,9 @@
-# Importa la biblioteca 'socket' para habilitar la comunicación de red, 
-# lo que permite la creación y el uso de sockets para establecer conexiones
-# y transmitir datos entre el cliente y el servidor.
 import socket
-
-# Importa la biblioteca 'threading' que proporciona herramientas para trabajar
-# con subprocesos, lo que permite manejar múltiples conexiones de clientes de forma concurrente.
 import threading
-
-# Importa la biblioteca 'time' para trabajar con funciones relacionadas con el tiempo,
-# como la obtención de la marca de tiempo actual, que se utiliza en la función de manejo
-# de clientes para marcar los mensajes con la hora en que se enviaron.
 import time
 
-
-# Diccionario para almacenar los mensajes de los clientes
 mensajes = {}
-
-def guardar_ip_y_mensaje(ip, mensaje):
-    # Abre el archivo en modo de escritura con la opción de agregar ('a' para append)
-    with open('registro_ip.txt', 'a') as archivo:
-        # Concatena la dirección IP y el mensaje en una sola cadena
-        entrada = f"IP: {ip}, Mensaje: {mensaje}\n"
-        
-        # Escribe la entrada en el archivo
-        archivo.write(entrada)
-
-# Función para enviar mensajes al servidor
-def enviar_mensaje(socketCliente, mensaje):
-    # Obtiene la marca de tiempo actual del cliente
-    tiempoProcesado = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    
-    # Construye el mensaje concatenando la marca de tiempo con el mensaje original
-    mensajeCompleto = f"[{tiempoProcesado}] {mensaje}"
-    
-    # Envia el mensaje al servidor como bytes codificados en UTF-8
-    socketCliente.send(mensajeCompleto.encode('utf-8'))
-
+ip_servidor = "192.168.91.130"  # Cambia la IP del servidor según tus necesidades
 
 def escribir_diccionario_en_archivo(diccionario, nombre_archivo):
     """
@@ -91,34 +59,66 @@ def procesarCliente(socketCliente, ipCliente):
             print(f"Ocurrió un error: {error}")
             break
 
-    
-    escribir_diccionario_en_archivo(mensajes,'logs.txt')
 
-def main(ip):
-    # Crea un socket de tipo AF_INET (IPv4) y SOCK_STREAM (TCP)
+
+
+def iniciar_servidor():
     socketServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-    # Enlaza el socket al localhost en el puerto 8000
-    # En el caso para obtener este ip, lo conseguimos usando 
-    # el comando ipconfig en la terminal de windows
-    socketServer.bind((str(ip), 8000))
-
-    # Escucha hasta 5 conexiones entrantes en el socket
+    ip_servidor = "localhost"
+    socketServer.bind((ip_servidor, 8000))
     socketServer.listen(5)
     print("Servidor esperando conexiones...")
 
     while True:
-        # Acepta una conexión entrante y obtiene el socket del cliente y su dirección
         socketCliente, ipCliente = socketServer.accept()
         print(f"Nueva conexión establecida con {ipCliente}")
-
-        # Inicia un subproceso para manejar al cliente
         manejandoCliente = threading.Thread(target=procesarCliente, args=(socketCliente, ipCliente))
         manejandoCliente.start()
 
+# Función para enviar mensajes al servidor
+def enviar_mensaje(socketCliente, mensaje):
+    # Obtiene la marca de tiempo actual del cliente
+    tiempoProcesado = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    
+    # Construye el mensaje concatenando la marca de tiempo con el mensaje original
+    mensajeCompleto = f"[{tiempoProcesado}] {mensaje}"
+    
+    # Envia el mensaje al servidor como bytes codificados en UTF-8
+    socketCliente.send(mensajeCompleto.encode('utf-8'))
+
+
+# Función para enviar mensajes a otro servidor
+def enviar_mensaje_a_servidor(ip_destino, mensaje):
+    miSocket = socket.socket()
+    miSocket.connect((str(ip_destino), 8000))
+    try:
+        enviar_mensaje(miSocket, mensaje)
+        respuesta = miSocket.recv(1024)
+        print(respuesta.decode('utf-8'))
+    except ConnectionResetError as error:
+        print("No se pudo enviar el mensaje al servidor destino:", error)
+    miSocket.close()
+
+def main():
+    # Iniciar el servidor en un hilo separado
+    servidor_thread = threading.Thread(target=iniciar_servidor)
+    servidor_thread.start()
+
+    while True:
+        print("Opciones:")
+        print("1. Enviar mensaje a otro servidor")
+        print("2. Salir")
+        opcion = input("Selecciona una opción: ")
+
+        if opcion == "1":
+            ip_destino = input("Ingresa la dirección IP de destino: ")
+            mensaje = input("Escribe el mensaje: ")
+            enviar_mensaje_a_servidor(ip_destino, mensaje)
+        elif opcion == "2":
+            print("Saliendo del programa.")
+            break
+        else:
+            print("Opción no válida. Por favor, selecciona una opción válida.")
 
 if __name__ == "__main__":
-    # Verifica si este archivo se está ejecutando como un programa independiente
-    # y no está siendo importado como un módulo en otro programa.
-    # Si es el programa principal, ejecuta la función 'main()'.
-    main("192.168.91.130")
+    main()
