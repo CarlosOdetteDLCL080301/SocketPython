@@ -3,7 +3,7 @@ import threading
 import time
 
 mensajes = {}
-ip_servidor = "192.168.91.130"  # Cambia la IP del servidor según tus necesidades
+#ip_servidor = "192.168.91.130"  # Cambia la IP del servidor según tus necesidades
 
 def escribir_diccionario_en_archivo(diccionario, nombre_archivo):
     """
@@ -64,6 +64,7 @@ def procesarCliente(socketCliente, ipCliente):
 
 def iniciar_servidor():
     socketServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    #Aqui debemos cambiarlo por nuestro ip
     ip_servidor = "localhost"
     socketServer.bind((ip_servidor, 8000))
     socketServer.listen(5)
