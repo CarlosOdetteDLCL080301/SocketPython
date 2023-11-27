@@ -14,6 +14,14 @@ class NodoSucursal:
             cliente.connect(("localhost", 5000))
             cliente.sendall(json.dumps(mensaje).encode())
 
+    def agregarSucursal(self):
+        # Envía un mensaje al nodo maestro para agregar una sucursal.
+        mensaje = {
+            "comando": "agregar_sucursal",
+            "sucursal": self.sucursal
+        }
+        self.conectar_a_maestro(mensaje)
+
     def agregar_articulo(self, articulo, cantidad):
         # Envía un mensaje al nodo maestro para agregar un artículo al inventario de la sucursal.
         mensaje = {
@@ -38,5 +46,6 @@ if __name__ == "__main__":
     sucursal_a = NodoSucursal("localhost", 5001, "sucursal_ecatepec")
     sucursal_b = NodoSucursal("localhost", 5002, "sucursal_guadalajara")
 
-    sucursal_b.agregar_articulo("Fritos", 20)
+    sucursal_b.agregarSucursal()
+    #sucursal_a.agregar_articulo("Fritos", 0)
     #sucursal_a.comprar_articulo("Cliente1", "Producto1")

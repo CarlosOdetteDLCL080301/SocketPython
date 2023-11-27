@@ -2,52 +2,26 @@ import socket
 import json
 import threading
 import random
+plantilla = {}
 class NodoMaestro:
     def __init__(self, host, port):
         # Inicializa el nodo maestro con la dirección y puerto especificados,
         # y crea estructuras de datos para el inventario, clientes y un mutex para la exclusión mutua.
         self.host = host
         self.port = port
-        self.inventario = {
-            # Sucursal de Ecatepec
-            "sucursal_ecatepec" : {
-                "Fritos": random.randint(0, 100),
-                "Cheetos": random.randint(0, 100),
-                "Doritos": random.randint(0, 100),
-                "Ruffles": random.randint(0, 100),
-                "Tostitos": random.randint(0, 100),
-                "Sabritas Adobadas": random.randint(0, 100),
-                "Rancheritos": random.randint(0, 100),
-                "Chocoretas": random.randint(0, 100),
-                "Sabritas": random.randint(0, 100),
-            },
-
-            # Sucursal de Guadalajara
-            "sucursal_guadalajara" : {
-                "Fritos": random.randint(0, 100),
-                "Cheetos": random.randint(0, 100),
-                "Doritos": random.randint(0, 100),
-                "Ruffles": random.randint(0, 100),
-                "Tostitos": random.randint(0, 100),
-                "Sabritas Adobadas": random.randint(0, 100),
-                "Rancheritos": random.randint(0, 100),
-                "Chocoretas": random.randint(0, 100),
-                "Sabritas": random.randint(0, 100),
-            },
-
-            # Sucursal de Monterrey
-            "sucursal_monterrey" : {
-                "Fritos": random.randint(0, 100),
-                "Cheetos": random.randint(0, 100),
-                "Doritos": random.randint(0, 100),
-                "Ruffles": random.randint(0, 100),
-                "Tostitos": random.randint(0, 100),
-                "Sabritas Adobadas": random.randint(0, 100),
-                "Rancheritos": random.randint(0, 100),
-                "Chocoretas": random.randint(0, 100),
-                "Sabritas": random.randint(0, 100),
-            }
+        self.limitarInventarioMax = 1000
+        self.inventarioMaestro = {            
+            "Fritos":               random.randint(0, self.limitarInventarioMax),
+            "Cheetos":              random.randint(0, self.limitarInventarioMax),
+            "Doritos":              random.randint(0, self.limitarInventarioMax),
+            "Ruffles":              random.randint(0, self.limitarInventarioMax),
+            "Tostitos":             random.randint(0, self.limitarInventarioMax),
+            "Sabritas Adobadas":    random.randint(0, self.limitarInventarioMax),
+            "Rancheritos":          random.randint(0, self.limitarInventarioMax),
+            "Chocoretas":           random.randint(0, self.limitarInventarioMax),
+            "Sabritas":             random.randint(0, self.limitarInventarioMax),
         }
+        self.inventario = {}
         self.clientes = {}
         self.mutex = threading.Lock()
 
@@ -57,11 +31,30 @@ class NodoMaestro:
             servidor.bind((self.host, self.port))
             servidor.listen()
             print(f"Nodo Maestro escuchando en {self.host}:{self.port}")
-
+            print(self.inventarioMaestro)
             while True:
                 conexion, direccion = servidor.accept()
                 threading.Thread(target=self.atender_cliente, args=(conexion, direccion)).start()
 
+    def distribuirAutomaticamente(self):
+        
+        for producto, cantidad in self.inventarioMaestro.items():
+            if len(self.inventario) != 0:
+                for sucursal in self.inventario:
+                    self.inventario[sucursal][producto] = 0
+
+        print("DISTRIBUIR")
+        for producto, cantidad in self.inventarioMaestro.items():
+            #print(f"producto {producto}, cantidad {cantidad}")
+            if len(self.inventario) != 0:
+                cantidad_por_sucursal = cantidad // len(self.inventario)
+                #print(f"cantidad_por_sucursal {cantidad_por_sucursal} = cantidad {cantidad}// len(self.inventario) {len(self.inventario)}")
+                for sucursal in self.inventario:
+                    print(f"self.inventario[sucursal {sucursal}][producto {producto}]{self.inventario[sucursal][producto]} += cantidad_por_sucursal {cantidad_por_sucursal}")
+                    self.inventario[sucursal][producto] += cantidad_por_sucursal
+                self.inventario[sucursal][producto] += cantidad%len(self.inventario)
+        print(self.inventario)               
+        
     def atender_cliente(self, conexion, direccion):
         # Atiende a un cliente (sucursal) específico.
         with conexion:
@@ -81,7 +74,24 @@ class NodoMaestro:
             self.agregar_articulo(mensaje["articulo"], mensaje["cantidad"], mensaje["sucursal"])
         elif comando == "comprar_articulo":
             self.comprar_articulo(mensaje["id_cliente"], mensaje["articulo"], mensaje["sucursal"])
+        elif comando == "agregar_sucursal":
+            self.agregar_sucursal(mensaje["sucursal"])
         # Agregar más comandos según sea necesario
+    
+    #Creamos una función, unicamente para considerarlo para el inventario 
+    def agregar_sucursal(self, sucursal):
+        self.inventario[sucursal] = {
+            "Fritos": 0,
+                "Cheetos": 0,
+                "Doritos": 0,
+                "Ruffles": 0,
+                "Tostitos": 0,
+                "Sabritas Adobadas": 0,
+                "Rancheritos": 0,
+                "Chocoretas": 0,
+                "Sabritas": 0,
+        }
+        self.distribuirAutomaticamente()
 
     def agregar_articulo(self, articulo, cantidad, sucursal):
         # Agrega un artículo al inventario de una sucursal.
