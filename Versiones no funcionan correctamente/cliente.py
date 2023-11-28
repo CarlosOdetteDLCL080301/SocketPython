@@ -7,14 +7,6 @@ import socket
 # en este caso, se utiliza para obtener la marca de tiempo actual y formatearla.
 import time
 
-def guardar_ip_y_mensaje(ip, mensaje):
-    # Abre el archivo en modo de escritura con la opción de agregar ('a' para append)
-    with open('registro_ip.txt', 'a') as archivo:
-        # Concatena la dirección IP y el mensaje en una sola cadena
-        entrada = f"IP: {ip}, Mensaje: {mensaje}\n"
-        
-        # Escribe la entrada en el archivo
-        archivo.write(entrada)
 
 # Función para enviar mensajes al servidor
 def enviar_mensaje(socketCliente, mensaje):
@@ -28,12 +20,12 @@ def enviar_mensaje(socketCliente, mensaje):
     socketCliente.send(mensajeCompleto.encode('utf-8'))
 
 
-def main(ip):
+def main():
     # Crea un nuevo socket del cliente
     miSocket = socket.socket()
     
     # Establece una conexión con el servidor en localhost y el puerto 8000
-    miSocket.connect((str(ip), 8000))
+    miSocket.connect(('192.168.100.5', 8000))
 
     while True:
         # Obtiene un mensaje ingresado por el usuario
@@ -47,8 +39,6 @@ def main(ip):
             # Recibe una respuesta del servidor (hasta 1024 bytes) y la decodifica
             respuesta = miSocket.recv(1024)
             print(respuesta.decode('utf-8'))
-            #guardar_ip_y_mensaje(str(ip),mensaje)
-            #agregar todos los mensajes,que se envian desde este I, y los almacena en un diccionario, donde unicamente aparrezca el IP y el mensaje referen
         #Cuando se interrumpe la comunicación con el servidor, se finaliza la petición de más mensajes
         #y esto provoca que el programa al igual finalice de este lado. 
         except ConnectionResetError as error:
@@ -63,4 +53,4 @@ if __name__ == "__main__":
     # Verifica si este archivo se está ejecutando como un programa independiente
     # y no está siendo importado como un módulo en otro programa.
     # Si es el programa principal, ejecuta la función 'main()'.
-    main("192.168.100.5")
+    main()

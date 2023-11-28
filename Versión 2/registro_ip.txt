@@ -1,0 +1,7 @@
+IP: localhost, Mensaje: HOLA!
+IP: localhost, Mensaje: hola
+IP: localhost, Mensaje: carlos
+IP: localhost, Mensaje: a
+IP: 192.168.100.5, Mensaje: k
+IP: 192.168.100.5, Mensaje: k
+IP: 192.168.100.5, Mensaje: a
